@@ -1,0 +1,23 @@
+# GHAV replay of telegraf/telegraf#1328 on the pinned Before task tree.
+name: GHAV telegraf 1328
+on:
+  push:
+    branches: ['codex/ghav-telegraf-1328-*']
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['12.22.12', '14.21.3']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Setup historical Node ${{ matrix.node-version }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npm run lint
